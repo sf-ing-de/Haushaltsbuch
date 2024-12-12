@@ -13,12 +13,12 @@
     <label v-if="fileParsed" >Preview lines:</label>
     <input v-if="fileParsed" type="number" v-model="filePreviewFirstNLines" min="0" @change="onChangePreviewLines">
   </form>
-  <table v-if="fileParsed" style="width: 100%;">
+  <table v-if="fileParsed & (fileContent.length > 0)" style="width: 100%;">
     <thead>
         <tr>
-            <th v-for="header in fileContent[0]"
-                v-bind:key="'header-' + header" @click="onClickHeader($event, header)">
-                {{ header }}
+            <th v-for="header in fileContent[0].length"
+                v-bind:key="'header-' + header" @click="onClickHeader($event, header-1)">
+                {{ fileContent[0][header-1] }}
             </th>
         </tr>
     </thead>
@@ -41,25 +41,35 @@
         </tr>
     </tbody>
   </table>
-  <!-- <table v-if="fileParsed" style="width: 100%;">
+
+  <table v-if="fileParsed & (fileContentNew.length > 0)" style="width: 100%;">
     <thead>
         <tr>
-            <th v-for="(header, key) in fileContent.meta.fields"
-                v-bind:key="'header-'+key">
-                {{ header }} new
+            <th v-for="header in fileContentNew[0]"
+                v-bind:key="'header-' + header" @click="onClickHeaderNew($event, header)">
+                {{ header }}
             </th>
         </tr>
     </thead>
-    <tbody>
-        <tr v-for="(row, rowKey) in fileContent.data"
-            v-bind:key="'row-'+rowKey">
-                <td v-for="(column, columnKey) in fileContent.meta.fields"
-                    v-bind:key="'row-'+rowKey+'-column-'+columnKey">
-                        <input v-model="fileContent.data[rowKey][column]"/>
-                </td>
+    <tbody v-if="filePreviewFirstNLines.valueOf()">
+      <tr v-for="line in filePreviewFirstNLines.valueOf()"
+          v-bind:key="'row-'+line">
+            <td v-for="column in fileContentNew[line].length"
+                v-bind:key="'row-' + line + '-column-' + column">
+                  <input v-model="fileContentNew[line][column-1]"/>
+            </td>
+      </tr>
+    </tbody>
+    <tbody v-else-if="(fileContentNew[line].length > 0)">
+      <tr v-for="line in fileContentNew.length - 1"
+          v-bind:key="'row-' + line">
+            <td v-for="column in fileContentNew[line].length"
+                v-bind:key="'row-' + line + '-column-' + column">
+                  <input v-model="fileContentNew[line][column-1]"/>
+            </td>
         </tr>
     </tbody>
-  </table> -->
+  </table>
 </template>
 
 <script setup>
@@ -67,8 +77,8 @@ import { ref, toRaw } from 'vue'
 import Papa from 'papaparse'
 
 console.log("script setup: Start")
-const fileContent = ref();
-const fileContentNew = ref();
+const fileContent = ref([]);
+const fileContentNew = ref([]);
 const fileObject = ref('')
 const fileParsed = ref(false)
 const fileSkipFirstNLines = ref(0)
@@ -117,17 +127,16 @@ const onChangePreviewLines = (event) => {
   parseFile();
 }
 
-const onClickHeader = (event, key) => {
+const onClickHeader = (event, header) => {
   console.log('onClickHeader start');  
-  console.log('onClickHeader key: ', key);
+  console.log('onClickHeader header: ', header);
   console.log('onClickHeader event.target.innerHTML: ', event.target.innerHTML);
-  // console.log('onClickHeader fileContent.value.meta: ', fileContentNew.value.meta);
-  // console.log('onClickHeader fileContent.value.meta.fields: ', fileContentNew.value.meta.fields);
-  // console.log('onClickHeader fileContent.value.meta.fields[key]: ', fileContentNew.value.meta.fields[key]);
   // console.log('onClickHeader fileContent.value.meta.fields.push(): ', fileContentNew.value.meta.fields.push(fileContent.value.meta.fields[key]));
-  // console.log('onClickHeader fileContentNew.value.meta.fields: ', fileContentNew.value.meta.fields);
-  
-  //parseFile();
+}
+const onClickHeaderNew = (event, header) => {
+  console.log('onClickHeaderNew start');  
+  console.log('onClickHeaderNew header: ', header);
+  console.log('onClickHeaderNew event.target.innerHTML: ', event.target.innerHTML);
 }
 
 </script>

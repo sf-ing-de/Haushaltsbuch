@@ -79,14 +79,17 @@ import Papa from 'papaparse'
 console.log("script setup: Start")
 const fileContent = ref([]);
 const fileContentNew = ref([]);
-const fileObject = ref('')
-const fileParsed = ref(false)
-const fileSkipFirstNLines = ref(0)
-const filePreviewFirstNLines = ref(10)
-const fileEncoding = ref('ascii')
+const fileObject = ref('');
+const fileParsed = ref(false);
+const fileSkipFirstNLines = ref(0);
+const filePreviewFirstNLines = ref(10);
+const fileEncoding = ref('ascii');
+const newHeaderarray = ref([]);
 
 const parseFile = () => {
   console.log('fileSkipFirstNLines.value: ' + fileSkipFirstNLines.value)
+  newHeaderarray.value = [];
+  fileContentNew.value = [];
   Papa.parse(fileObject.value, {
     header: false,
     skipEmptyLines: true,
@@ -95,9 +98,10 @@ const parseFile = () => {
       fileContent.value = results.data;
       // console.log('results.data ', results.data)
       // console.log('results.data[0] ', results.data[0])
-      // console.log('results.data[0] ', results.data[0][0])
+      // console.log('results.data[1] ', results.data[1])
+      // console.log('results.data["Buchung"] ', results.data["Buchung"])
       // console.log('results.meta ', results.meta)
-      //console.log('results.error ', results.errors)
+      // console.log('results.error ', results.errors)
       // console.log('fileContent.value.data ', fileContent.value)
       // for (const row in fileContent.value) {
       //   for (const col in fileContent.value[row]) {
@@ -128,10 +132,44 @@ const onChangePreviewLines = (event) => {
 }
 
 const onClickHeader = (event, header) => {
-  console.log('onClickHeader start');  
-  console.log('onClickHeader header: ', header);
-  console.log('onClickHeader event.target.innerHTML: ', event.target.innerHTML);
-  // console.log('onClickHeader fileContent.value.meta.fields.push(): ', fileContentNew.value.meta.fields.push(fileContent.value.meta.fields[key]));
+  // console.log('onClickHeader start');  
+  // console.log('onClickHeader header: ', header);
+  // console.log('onClickHeader event.target.innerHTML: ', event.target.innerHTML);
+
+  let headerExistsFlag = false;
+
+  newHeaderarray.value.forEach(element => {
+    if (element == header){
+      headerExistsFlag = true;
+    }
+  });
+  console.log('onClickHeader headerExistsFlag: ', headerExistsFlag);
+
+  if (headerExistsFlag == false){
+    newHeaderarray.value.push(header)
+    newHeaderarray.value.sort()
+  }
+  else {
+    newHeaderarray.value = newHeaderarray.value.filter((elements) => elements != header);
+    newHeaderarray.value.sort()
+  }
+  headerExistsFlag = false;
+  console.log('onClickHeader newHeaderarray.value: ', newHeaderarray.value);
+  
+  console.log('onClickHeader fileContent.value.length: ', fileContent.value.length);
+  console.log('onClickHeader fileContent.value[0].length: ', fileContent.value[0].length);
+  console.log('onClickHeader fileContent.value[0][0].length: ', fileContent.value[0][0].length);
+  
+  
+  fileContentNew.value = Array.from(Array(fileContent.value.length), () => new Array(newHeaderarray.value.length));
+  console.log('fileContentNew.value', fileContentNew.value)
+  for (let row = 0; row < fileContent.value.length; row++) {
+    newHeaderarray.value.forEach(col => {
+      fileContentNew.value[row][col] = fileContent.value[row][col]
+    });
+  }
+  console.log('fileContentNew.value', fileContentNew.value)
+
 }
 const onClickHeaderNew = (event, header) => {
   console.log('onClickHeaderNew start');  

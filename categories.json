@@ -1,0 +1,54 @@
+{
+	"Sparen" : 	
+		[
+			"Sparen", "Fondssparplan", "Taschengeld", "6070386289", "6060014575", "6328449170"
+		],
+	"Lebensmittel" :	
+		[
+			"Lebensmittel", "E-CENTER", "E CENTER", "LIDL", "REWE", "REAL", "DM", "NORMA", "EDEKA", "EILING", "SOMAT", "PERSIL", "Kaufland", "GROSCHEN", "Medherbs", "Zahnbuerstenaufsaetze", "TEDI", "ROSSMANN", "Staubsaugerbeutel", "NETTO", "MAC GEIZ", "Apotheke", "IHR LANDB", "OPERPFALZBEEF", "Waschmittel", "DONCARNE", "FRB", "800-279-6620", "800-279-6620","STENDALER LANDBAECKERE", "ALTMAERKER FLEISCH", "ORIENT MASTER GMBH", "1MAL1JAPAN", "BERLINERKAF", "DENNS BIOMARKT", "Verpflegung", "MEDPEX", "THOMAS PHILIPPS", "Essen", "CALLPIZZABR", "Japanische Zutaten", "Amazon Backmatten"
+		],
+	"Strom" : 
+		[
+			"Strom", "ENVIA", "Tibber", "EON"
+		],
+	"Telefon" : 
+		[
+			"Telefon", "1u1 Telecom GmbH", "Telekom", "CALLYA"
+		],
+	"Kleidung" : 
+		[
+			"Kleidung", "Socken", "Schuhe", "KIK", "WOEHRL", "ERNSTINGS", "Intersport", "MODEPARK", "TAKKO", "Windbreaker", "About You", "ELEVATE", "NIKE"
+		],
+	"Versicherung" : 
+		[
+			"Versicherung", "DEVK", "Reiseruecktrittversicherung", "AWP", "Medien-Versicherung", "Techniker Krankenkasse", "Barmenia Allgemeine Versicherungs"
+		],
+	"Gebuehren" : 
+		[
+			"Gebuehren", "Gebuehren/Grundsteuer", "GEMEINDE BENSDORF", "AMT WUSTERWITZ", "Rundfunk ARD, ZDF", "Landkreis Potsdam-Mittelmark"
+		],
+	"Bauen" : 
+		[
+			"Bauen", "TOOM", "HELLWEG", "Agravis", "Rauchmelder", "Sonderpreisbaumarkt", "Baukopp", "Pool", "Schraube", "Saege", "Winkel", "Remmers","Rundstange", "Scharnier", "Steckdosen", "Hohlwanddosen", "Hohlraumdosen", "Regenrinne", "Schubkarre", "Steg", "RM Wusterwitz", "BM Wusterwitz", "Rasenkalk", "Rasenduenger", "VELUX", "Heizungsreparatur", "PLANTSONLIN", "Raiffeisen", "Mischer", "Wucon", "ALTRAD", "CZAJA", "Feuerschale"
+		],
+	"Auto" : 
+		[
+			"Auto", "LUDWIG", "Durchsicht", "TUEV", "Toyota", "Kfz", "DG200115447", "Tank", "TOTAL", "ARAL", "Q1 "
+		],
+	"Tanken" : 
+		[
+			"Tank", "TOTAL", "ARAL", "Q1 "
+		],
+	"Events" : 
+		[
+			"Events", "Delta Bowling", "Rice and Spice", "Klassenfahrten", "MESOGIOS", "ROYALS & RIC", "VELOBERLIN", "ZOOPALAST", "FOOD BY PROSPER", "SUMUP", "Jakob Ausflug Gokart", "FIVE GUYS BERLIN", "MC DONALDS 91733", "MCDONALDS 509", "MCDONALDS 491", "MCDONALDS 673", "Wanderung Harz, Velo Berlin", "BALLERS PLACE", "CHINA GARTEN"
+		],
+	"Urlaub" : 
+		[
+			"Urlaub", "221943405EUR", "KV333450939", "CANUSA", "Fewo", "Wings and Drums", "Kurtaxe", "Kuehlungsborn", "K-BORN", "KUHLUNGSBOR", "KUEHLUNGSBO", "KBORN", "RIEKE SCHOENEBECK GMBH", "Meer FUN", "AUSLANDSEINSATZENTGEL", "RECREATION.GOV","MCDONALD\"S","TEXACO", "SAFEWAY", "WENDY", "Ralph", "LOS ANGELES", "FRESNO", "Raley", "DENNY", " OAKHURST", "SAN FRANCISCO", "WAL-MART", "WALMART", "Houston", "BOOKING.COM", "FIUMICINO", "ATLANTIC CITY", "Bargeld USA", "Bargeldabhebung Prag", "ALAMO", "PARIS", "THE PARC", "CHICK-FIL-A", "PIZZA HUT", "DEUTSCHEBAHN", "FLUSHING", "DULLES", "ELMHURST", "FREDDYS", "DELTA KEYPORT", "OCEAN CITY", "VIRGINIA", "DICK\"S", "HUGOS DUCK", "CHESAPEAKE", "ASHLAND", "WILLIAMSBURG", "CHARLOTTESVILLE", "CHAROLETTESVILL", "MOTEL 6", "WOODSTOCK", "WASHINGTON", "PHILADELPHIA", "BALTIMORE", "ANNAPOLIS", "LITITZ", "NEW YORK", "SHAKE SHACK", "MACY\"S", "BROOKLYN", "DBVERTRIEBG", "Reserve fuer USA", "Ersatzraeder Koffer",  "PHILLYWALKTOURS", "WEST PALM", "TACO BELL", "SIGHTSEEING PASS", "USCUSTOMSBO", "ZV Anke Schultz", "PRAHA", "ROMA", "HERBERER TERM", "CAVOUR", "Rom City Pass", "WWWTURBOPASSDE", "SALVATORERAGGIO", "23E04140332", "SANIFAIR", "BURGER KING", "KARLSRUHE", "BIG BUS TOURS", "PLAY AP"
+		],
+	"Transfer" : 
+		[
+			"Haushalt", "3750-160557-31007", "3750-196517-01002", "3750-160537-41008", "ZAHLUNG/ÜBERWEISUNG ERHALTEN BESTEN DANK", "Familienkasse", "PERSOENLICHES DARLEHEN", "Verwahrung Kreditsumme bis zur Verwendung", "Ausgleich Girokonto", "Bargeld", "Rueckzahlung fuer kurzfristigen", "Burkhard Adler", "Steuerrueckzahlung 2021", "Neue Kueche Rest", "KuechenTreff H Schultze ReNr 2175/5", "Marmeladenglas", " Metallbau Adler", "Andreas Mittag", "OLB Kredit"
+		]
+}

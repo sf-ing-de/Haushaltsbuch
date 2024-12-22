@@ -1,28 +1,55 @@
 <style>
+
 table, th, tr, td {
+  table-layout: auto;
   text-align: left; 
   border: 1px solid; 
   border-collapse: collapse;
-  padding: 4px;
+  padding: 5px;
 }
-tr:nth-child(even) {background-color: rgb(255, 231, 231);}
+tr:nth-child(odd) {background-color: rgb(255, 231, 231);}
+
+.container {
+  /*background: rgb(0, 0, 255);*/
+  position: relative;
+  height: auto;
+}
+
+.base {
+  display: block;
+  padding: 4px;
+  visibility: hidden;
+  width: 100%;
+  /* height: 100%; */
+}
+
+.overlay {
+  position: absolute; 
+  top: 0;
+  background: rgb(255, 255, 255);
+  width: 98%;
+  padding: 4px;
+
+  /*height: 97%;*/
+}
 
 </style>
 
 <template>
   
   <form @submit.prevent>
-    <input type="file" accept=".csv" @change="onFileSelected" />
-    <label>Skip n first lines:</label>
-    <input type="number" v-model="fileSkipFirstNLines" min="0" @change="onChangeSkipLines">
-    <label for="encoding">File encoding:</label>
-    <select v-model="fileEncoding" @change="onChangeEncoding">
+    <input type="file" accept=".csv" @change="onCSVFileSelected" />
+    <label v-if="fileParsed">Skip n first lines:</label>
+    <input v-if="fileParsed" type="number" v-model="fileSkipFirstNLines" min="0" @change="onChangeSkipLines">
+    <label v-if="fileParsed" for="encoding">File encoding:</label>
+    <select v-if="fileParsed" v-model="fileEncoding" @change="onChangeEncoding">
       <option value="ascii">ASCII</option>
       <option value="utf-8">UTF-8</option>
     </select>
     <br>
-    <label v-if="fileParsed" >Preview lines:</label>
-    <input v-if="fileParsed" type="number" v-model="filePreviewFirstNLines" min="0" @change="onChangePreviewLines">
+    <label for="filePreviewFirstNLines" v-if="fileParsed" >Auswahl der Zeilen für die Vorschau, 0 zeigt alle Zeilen:</label>
+    <input name="filePreviewFirstNLines" v-if="fileParsed" type="number" v-model="filePreviewFirstNLines" min="0" @change="onChangePreviewLines">
+    <input v-if="fileParsed" type="submit" value="Alle Spalten übernehmen" @click="onClickAssignAllColumns($event)">
   </form>
   <table v-if="fileParsed & (fileContent.length > 0)" style="width: 100%;">
     <thead>
@@ -57,8 +84,9 @@ tr:nth-child(even) {background-color: rgb(255, 231, 231);}
       <label for="newColumn">Auswahl einer bestehenden Spalte oder Eingabe einer neuen:</label>
       <input list="existingColums" name="newColumn" id="newColumn" autocomplete="off"
              v-model="newColumnForm">
+             fileContentNew[0]: {{ fileContentNew[0] }}
       <datalist id="existingColums">
-        <option v-for="header in newHeaderarray"
+        <option v-for="header in fileContentNew[0]"
                 v-bind:value="header"></option>
       </datalist>
       <select v-model="newColumnFormat" @change="onChangeColumnFormat">
@@ -81,9 +109,35 @@ tr:nth-child(even) {background-color: rgb(255, 231, 231);}
   </div>
   <div v-if="fileContentNew.length > 0">Zum Löschen einer Spalte, einen Doppelklick auf den Spaltennamen ausführen.
     <button @click="onClickDownloadFileContenNew">Download</button>
-
   </div>
-
+  <div v-if="fileContentNew.length > 0">
+    <label for="fileNewPreviewFirstNLines">Auswahl der Zeilen für die Vorschau, 0 zeigt alle Zeilen:</label>
+    <input name="fileNewPreviewFirstNLines" type="number" v-model="fileNewPreviewFirstNLines" min="0" @change="onChangePreviewNewLines">
+  </div>
+  <div v-if="fileContentNew.length > 0">
+    <label for="JSONFilterLoad">Laden eines JSON Filters:</label>
+    <input name="JSONFilterLoad" type="file" accept=".json" @change="onJSONFileSelected" />
+  </div>
+  <div v-if="Object.keys(categoryJSON).length > 0">
+    <label for="columnToFilter">Spalte zum Filter:</label>
+    <input list="listForColumnToFilter" name="columnToFilter" id="columnToFilterID" autocomplete="off"
+           v-model="columnToFilter">
+    <datalist id="listForColumnToFilter">
+      <option v-for="columns in fileContentNew[0]" v-bind:value="columns"></option>
+    </datalist>
+    <label for="JSONFilter">JSON Filters:</label>
+    <input list="existingFilters" name="newColumnFilter" id="newColumnFilterID" autocomplete="off"
+           v-model="newColumnFilter">
+    <datalist id="existingFilters">
+      <option v-for="key in Object.keys(categoryJSON)" v-bind:value="key"></option>
+    </datalist>
+    <button @click="onClickFilterChange">Filter anwenden</button>
+  </div>
+  <div v-if="Object.keys(categoryJSON).length > 0">    
+    <label for="selectedFilter">Wörter nach denen gefiltert wird, müssen durch ein Komma getrennt sein:</label>
+    <input type="text" name="selectedFilter" id="selectedFilter" style="width: 100%;"
+           v-model="categoryJSON[newColumnFilter]">
+  </div>
   <table v-if="fileParsed & (fileContentNew.length > 0)" style="width: 100%;">
     <thead>
         <tr>
@@ -93,12 +147,15 @@ tr:nth-child(even) {background-color: rgb(255, 231, 231);}
             </th>
         </tr>
     </thead>
-    <tbody v-if="filePreviewFirstNLines.valueOf()">
-      <tr v-for="line in filePreviewFirstNLines.valueOf()"
+    <tbody v-if="fileNewPreviewFirstNLines.valueOf()">
+      <tr v-for="line in fileNewPreviewFirstNLines.valueOf()"
           v-bind:key="'row-'+line">
             <td v-for="column in fileContentNew[line].length"
                 v-bind:key="'row-' + line + '-column-' + column">
-                <input v-model="fileContentNew[line][column-1]" />
+                <div class='container'>
+                  <div class='base'> {{ fileContentNew[line][column-1] }} </div>
+                  <input class='overlay' v-model="fileContentNew[line][column-1]" />
+                </div>
             </td>
       </tr>
     </tbody>
@@ -107,7 +164,11 @@ tr:nth-child(even) {background-color: rgb(255, 231, 231);}
           v-bind:key="'row-' + (line)">
             <td v-for="column in fileContentNew[line].length"
                 v-bind:key="'row-' + (line) + '-column-' + column">
-                <input v-model="fileContentNew[line][column-1]" />
+                <div class='container'>
+                  <div class='base'> {{ fileContentNew[line][column-1] }} </div>
+                  <input class='overlay' v-model="fileContentNew[line][column-1]" />
+                </div>
+                
             </td>
         </tr>
     </tbody>
@@ -121,17 +182,22 @@ import Papa from 'papaparse'
 console.log("script setup: Start")
 const fileContent = ref([]);
 const fileContentNew = ref([]);
-const fileObject = ref('');
+const fileContentNewFiltered = ref(new Object());
+const fileObjectCSV = ref('');
+const fileObjectJSON = ref('');
+const categoryJSON = ref('');
 const fileParsed = ref(false);
 const fileSkipFirstNLines = ref(0);
-const filePreviewFirstNLines = ref(5);
-const fileEncoding = ref('ascii');
+const filePreviewFirstNLines = ref(3);
+const fileNewPreviewFirstNLines = ref(5);
+const fileEncoding = ref('utf-8');
 const newColumnFormat = ref('text');
 const newColumnFormatDate = ref('e.g. dd-mm-yyyy or mm/dd/yy');
 const newColumnFormatCurrentAlternate = ref('no');
 const newColumnFormatCurrentSeperator = ref(',');
-const newHeaderarray = ref([]);
 const newColumnForm = ref([]);
+const newColumnFilter = ref([]);
+const columnToFilter = ref();
 const flagGlobal = ref( {
   fileParsed: false,
   clickedHeader : false,
@@ -147,28 +213,69 @@ let selectedHeader = -1;
 
 //console.log('[10, 20, 30].map((col, i) => {if(i == tmp) {value} else {0}})', [10, 20, 30].map((col, i) => {if(i == tmp) {return value} else {return 0}}))
 
+const onClickFilterChange = (event) => {
+  console.log('onFilterChange: start ');
+  // console.log('onFilterChange: columnToFilter.value ', toRaw(columnToFilter.value));
+  // console.log('onFilterChange: categoryJSON.value ', toRaw(categoryJSON.value));
+  // console.log('onFilterChange: Object.keys(categoryJSON.value) ', toRaw(Object.keys(categoryJSON.value)));
+  // console.log('onFilterChange: fileContentNew.value ', toRaw(fileContentNew.value));
+  for (const category of Object.keys(categoryJSON.value)) {
+    // fileContentNewFiltered.value[category] = [toRaw(fileContentNew.value[0])];
+    fileContentNewFiltered.value[category] = [toRaw(fileContentNew.value[0])];
+    for (let row = 1; row < fileContentNew.value.length; row++) {
+      for (const searchString of categoryJSON.value[category]) {
+        const colToflt = fileContentNew.value[0].indexOf(columnToFilter.value);
+        const stringExtract = toRaw(fileContentNew.value[row][colToflt]);
+        console.log('onFilterChange: stringExtract: ', stringExtract);
+        if (stringExtract.includes(searchString)) {
+          fileContentNewFiltered.value[category].push(toRaw(fileContentNew.value[row]));
+        }
+      }
+    }    
+  }
+  
 
+  console.log('onFilterChange: fileContentNewFiltered.value: ', toRaw(fileContentNewFiltered.value));
 
-const parseFile = () => {
+  // fileContentNewFiltered.value[element] = fileContentNew.value[columnToFilter.value]
+
+}
+
+const onJSONFileSelected = (event) => {
+  fileObjectJSON.value = event.target.files[0];
+  parseJSONFile();
+}
+
+const parseJSONFile = () => {
+  
+  const reader = new FileReader();
+
+  reader.addEventListener(
+    "load",
+    () => {
+      //console.log('parsJSONFile: reader.result: ', reader.result)
+      categoryJSON.value = JSON.parse(reader.result);
+      //console.log('parsJSONFile: categoryJSON.value: ', categoryJSON.value)
+      //console.log('parsJSONFile: categoryJSON.value.Lebensmittel: ', categoryJSON.value.Lebensmittel)
+      //console.log('parsJSONFile: Object.keys(categoryJSON.value): ', Object.keys(categoryJSON.value))
+
+    },
+    false,
+  );
+
+  if (fileObjectJSON.value) {
+    reader.readAsText(fileObjectJSON.value);
+  }
+}
+
+const parseCSVFile = () => {
   //console.log('fileSkipFirstNLines.value: ' + fileSkipFirstNLines.value)
-  Papa.parse(fileObject.value, {
+  Papa.parse(fileObjectCSV.value, {
     header: false,
     skipEmptyLines: true,
     encoding: fileEncoding.value,
     complete: function( results ){
       fileContent.value = results.data;
-      // console.log('results.data ', results.data)
-      // console.log('results.data[0] ', results.data[0])
-      // console.log('results.data[1] ', results.data[1])
-      // console.log('results.data["Buchung"] ', results.data["Buchung"])
-      // console.log('results.meta ', results.meta)
-      // console.log('results.error ', results.errors)
-      // console.log('fileContent.value.data ', fileContent.value)
-      // for (const row in fileContent.value) {
-      //   for (const col in fileContent.value[row]) {
-      //     console.log('fileContent.value[' + row + '][' + col + ']', fileContent.value[row][col])
-      //   }
-      // }
       fileParsed.value = true;
     },
     beforeFirstChunk: chunk => [...chunk.split('\n').slice(fileSkipFirstNLines.value)].join('\n')
@@ -206,22 +313,25 @@ const onClickDownloadFileContenNew = (event) => {
 }
 
 const onChangeSkipLines = (event) => {
-  parseFile();
+  parseCSVFile();
 }
 
-const onFileSelected = (event) => {
-  //newHeaderarray.value = [];
+const onCSVFileSelected = (event) => {
   //fileContentNew.value = [];
-  fileObject.value = event.target.files[0];
-  parseFile();
+  fileObjectCSV.value = event.target.files[0];
+  parseCSVFile();
 }
 
 const onChangeEncoding = (event) => {
-  parseFile();
+  parseCSVFile();
 }
 
 const onChangePreviewLines = (event) => {
-  parseFile();
+  parseCSVFile();
+}
+
+const onChangePreviewNewLines = (event) => {
+
 }
 
 const onClickHeader = (event, header) => {
@@ -396,10 +506,23 @@ function changeColumnFormat(tmp) {
 return tmp;
 }
 
+const onClickAssignAllColumns = (event) => {
+  //console.log('onClickAssignAllColumns start')
+
+  newColumnFormat.value = 'text';
+
+  for (let index = 0; index < fileContent.value[0].length; index++) {
+    //console.log('onClickAssignAllColumns: fileContent.value[0][index]', fileContent.value[0][index])
+    newColumnForm.value = fileContent.value[0][index];
+    selectedHeader = index;
+    onClickAssignNewColumn();
+  }
+  
+}
+
 const onClickAssignNewColumn = (event) => {
   //console.log('onClickAssignNewColumn start: ');  
   //console.log('onClickAssignNewColumn: newColumnForm.value: ', newColumnForm.value)
-  //console.log('onClickAssignNewColumn: newHeaderarray.value: ', newHeaderarray.value)
 
   // Überprüfung ob es schon ein neues CSV Objekt gibt
   if (fileContentNew.value.length > 0) {

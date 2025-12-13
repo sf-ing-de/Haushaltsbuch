@@ -1,0 +1,62 @@
+{
+	"Darlehen" : 	
+		[
+			"6070386289", "6060014575", "OLB Kredit", "6328449170"
+		],
+	"Sparen" : 	
+		[
+			"Sparen", "Fondssparplan", "Taschengeld", "Schule", "251102"
+		],
+	"Lebensmittel" :	
+		[
+			"Lebensmittel", "E-CENTER", "E CENTER", "LIDL", "REWE", "REAL", "DM", "NORMA", "EDEKA", "GETRAENKE-QUELLE", "EILING", "SOMAT", "PERSIL", "Kaufland", "GROSCHEN", "Medherbs", "Zahnbuerstenaufsaetze", "TEDI", "ROSSMANN", "Staubsaugerbeutel", "NETTO", "MAC GEIZ", "Apotheke", "IHR LANDB", "Waschmittel","STENDALER LANDBAECKERE", "ALTMAERKER FLEISCH", "ORIENT MASTER GMBH", "1MAL1JAPAN", "BERLINERKAF", "DENNS BIOMARKT", "Verpflegung", "MEDPEX", "THOMAS PHILIPPS", "CALLPIZZABR", "Japanische Zutaten", "ACTION 3570", "WOOLWORTH", "BERLINER KAFFEEROE", "Geburtstagskosten", "ASIA4FRIEND", "3750-160537-41008", "3750-160557-31007", "3750-196517-01002"
+		],
+	"Strom" : 
+		[
+			"Strom", "ENVIA", "Tibber", "EON", "E.ON", "Viessmann", "504000042606"
+		],
+	"Telefon" : 
+		[
+			"Telefon", "1u1 Telecom GmbH", "Telekom", "CALLYA"
+		],
+	"Kleidung" : 
+		[
+			"Kleidung", "Socken", "Schuhe", "KIK", "WOEHRL", "ERNSTINGS", "Intersport", "MODEPARK", "TAKKO", "Windbreaker", "About You", "ELEVATE", "Zalando"
+		],
+	"Versicherung" : 
+		[
+			"Versicherung", "DEVK", "Reiseruecktrittversicherung", "AWP", "Medien-Versicherung", "Techniker Krankenkasse", "Barmenia Allgemeine Versicherungs"
+		],
+	"Gebuehren" : 
+		[
+			"Gebuehren", "Gebuehren/Grundsteuer", "GEMEINDE BENSDORF", "AMT WUSTERWITZ", "Rundfunk ARD, ZDF", "Landkreis Potsdam-Mittelmark"
+		],
+	"Bauen" : 
+		[
+			"Bauen", "Garten", "TOOM", "HELLWEG", "Agravis", "Sonderpreisbaumarkt", "Baukopp", "Pool", "Schraube", "Saege", "Winkel", "Remmers","Rundstange", "Scharnier", "Steckdosen", "Hohlwanddosen", "Hohlraumdosen", "Regenrinne", "Schubkarre", "Steg", "RM Wusterwitz", "BM Wusterwitz", "Rasenkalk", "Rasenduenger", "VELUX", "Heizungsreparatur", "PLANTSONLIN", "Raiffeisen", "Wucon", "SPC*GENTHINER GARTENCE"
+		],
+	"Auto" : 
+		[
+			"Auto", "LUDWIG", "Durchsicht", "TUEV", "Toyota", "Kfz"
+		],
+	"Tanken" : 
+		[
+			"Tank", "TOTAL", "ARAL", "Q1 "
+		],
+	"Events" : 
+		[
+			"Events", "RESTAURANT RICE & SPIC", "ASIA CUISINE & SUSHI", "ZUM ELFMETER", "GFV HANNOVER", "MC DONALDS"
+		],
+	"Urlaub" : 
+		[
+			"Urlaub", "CANUSA", "Fewo", "Wings and Drums", "Kurtaxe", "Kuehlungsborn", "K-BORN", "KUHLUNGSBOR", "KUEHLUNGSBO", "KBORN", "RIEKE SCHOENEBECK GMBH", "Meer FUN", "AUSLANDSEINSATZENTGEL", "RECREATION.GOV","MCDONALD\"S","TEXACO", "SAFEWAY", "WENDY", "Ralph", "DENNY", "WAL-MART", "WALMART", "BOOKING.COM", "ALAMO", "CHICK-FIL-A", "PIZZA HUT", "DEUTSCHEBAHN", "FREDDYS", "DICK\"S", "MOTEL 6", "SHAKE SHACK", "MACY\"S", "DBVERTRIEBG", "TACO BELL", "USCUSTOMSBO", "ZV Anke Schultz", "SANIFAIR", "BURGER KING", "BIG BUS TOURS", "MILKBOX ICE CREAM", "CLARK S COUNTRY", "Dicks Sporting Goods", "MCDONALDS", "PANDA EXPRESS", "HYATT", "CHILI'S", "EXXONMOBIL", "FIVE GUYS", "CULVERS", "OUTBACK", "LONGHORN", "CHECKERS", "TIAA STADIUM", "Zaxby's", "AUGUSTINE", "THE DELECTABLE EGG", "BROOKLYN'S FINEST", "UNITED AIRLINES", "DICK'S SPORTING GOODS", "HAMPTON", "LYFT", "FREDDY'S", "SONIC DRIVE IN", "CHEVRON", "MOAB", "CAPITOL REEF", "GOBLIN VALLEY", "ROCK GARDEN EATERY", "STATE PARKS", "UNITED STATES", "SWISS", "AIRBNB ", "Meer F.U.N."
+		],
+	"Transfer" : 
+		[
+			"Transfer", "KG039039FK100826", "Haushaltskonto", "Finanzamt ", "Ausgleich Diba SuE", "Jens-Peter Asche", "Asche Terrassen", "ZAHLUNG/ÜBERWEISUNG ERHALTEN BESTEN DANK"
+		],
+	"Sonstiges" : 
+		[
+			"Sonstiges"
+		]
+}

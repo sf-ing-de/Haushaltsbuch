@@ -133,7 +133,7 @@ tr:nth-child(odd) {background-color: rgb(255, 231, 231);}
     <input name="JSONFilterLoad" type="file" accept=".json" @change="onJSONFileSelected" />
   </div>
   <div v-if="Object.keys(categoryJSON).length > 0">
-    <label for="listForColumnToFilter">Spalte zum Filter:</label>
+    <label for="listForColumnToFilter">Spalte zum Filter (Achtung der Betrag muss in Spalte 3 sein!!!):</label>
     <select name="listForColumnToFilter" id="listForColumnToFilterID" v-model="columnToFilter" @change="onChangeFilterChange">
       <option v-for="columns in fileContentNew[0]" v-bind:value="columns">{{ columns }}</option>
     </select>

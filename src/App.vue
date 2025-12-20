@@ -238,6 +238,9 @@ tr:nth-child(odd) {background-color: rgb(255, 231, 231);}
 </template>
 
 <script setup>
+import { logger, logLevel, setLogLevel } from '@/utils/logger.js';
+setLogLevel(logLevel.INFO);
+
 import { ref, toRaw } from 'vue'
 import Papa from 'papaparse'
 
@@ -272,41 +275,45 @@ let selectedHeader = -1;
 
 // example for transpose an array:
 //let array = [[1,2,3,4], [5,6,7,8]];
-//console.log('array[0].map((col, i) => [array].map(row => row[i]))', array[0].map((col, i) => array.map(row => row[i])))
+// logger(logLevel.DEBUG, 'array[0].map((col, i) => [array].map(row => row[i]))', array[0].map((col, i) => array.map(row => row[i])))
 
-//console.log('[10, 20, 30].map((col, i) => {if(i == tmp) {value} else {0}})', [10, 20, 30].map((col, i) => {if(i == tmp) {return value} else {return 0}}))
+// logger(logLevel.DEBUG, '[10, 20, 30].map((col, i) => {if(i == tmp) {value} else {0}})', [10, 20, 30].map((col, i) => {if(i == tmp) {return value} else {return 0}}))
 
 const onChangeFilterChange = (event) => {
-  // Initialize a flag to track if a search string was found in the current row.
-  let stringDetected = false;
 
+  
   // Log the start of the filter change process for debugging.
-  console.log('onFilterChange: start ');
+  logger(logLevel.INFO, 'onFilterChange: start ');
 
   // Set a global flag to indicate that the filtered calculation needs to be updated.
   flagGlobal.value.fileContentNewFilteredCalculation = false;
+  
+  // Make a copy of fileContentNew.value to use the slice function in multiple filter loops
+  let fileContentNewTmp = fileContentNew.value.map(row => [...row]);
 
   // Initialize the filtered data structure.
   // Iterate through each category defined in categoryJSON.
   for (const category of Object.keys(categoryJSON.value)) {
-    // For each category, create an array in fileContentNewFiltered and add the header row from fileContentNew.
-    fileContentNewFiltered.value[category] = [toRaw(fileContentNew.value[0])];
-
-    // Initialize an empty object for calculations related to each category.
-    fileContentNewFiltered.value['calculations'] = new Object();
+    // For each category, create an array in fileContentNewFiltered and add the header row from fileContentNewTmp.
+    fileContentNewFiltered.value[category] = [toRaw(fileContentNewTmp[0])];
   }
+  // Initialize an empty object for calculations related to each category.
+  fileContentNewFiltered.value['calculations'] = new Object();
+  // Iterate through each row of the fileContentNewTmp data, starting from the second row (index 1).
+  outerloop:
+  for (let row = fileContentNewTmp.length - 1; row > 0; row--) {
 
-  // Iterate through each row of the fileContentNew data, starting from the second row (index 1).
-  for (let row = 1; row < fileContentNew.value.length; row++) {
+    // Reset the flag for the next row.
+    let stringDetected = false;
     // Iterate through each category defined in categoryJSON.
     for (const category of Object.keys(categoryJSON.value)) {
       // Iterate through each search string associated with the current category.
       for (const searchString of categoryJSON.value[category]) {
         // Get the column index to filter based on columnToFilter.value.
-        const colToflt = fileContentNew.value[0].indexOf(columnToFilter.value);
+        const colToflt = fileContentNewTmp[0].indexOf(columnToFilter.value);
 
         // Extract the string from the specified column in the current row and convert it to lowercase.
-        const stringExtract = toRaw(fileContentNew.value[row][colToflt]).toLowerCase();
+        const stringExtract = toRaw(fileContentNewTmp[row][colToflt]).toLowerCase();
 
         // Check if the extracted string includes the current search string (also converted to lowercase).
         if (stringExtract.includes(searchString.toLowerCase())) {
@@ -314,33 +321,43 @@ const onChangeFilterChange = (event) => {
           stringDetected = true;
 
           // Add the current row to the filtered data for the current category.
-          fileContentNewFiltered.value[category].push(toRaw(fileContentNew.value[row]));
+          fileContentNewFiltered.value[category].push(toRaw(fileContentNewTmp[row]));
+
           // Perform calculations: if the category is not yet in the calculations object, initialize it with the value from the third column (index 2).
           if (isNaN(fileContentNewFiltered.value.calculations[category])) {
-            fileContentNewFiltered.value.calculations[category] = Number.parseFloat(fileContentNew.value[row][2]);
+            fileContentNewFiltered.value.calculations[category] = Number.parseFloat(fileContentNewTmp[row][2]);
           } else {
             // Otherwise, add the value from the third column to the existing calculation for the category.
-            fileContentNewFiltered.value.calculations[category] = fileContentNewFiltered.value.calculations[category] + Number.parseFloat(fileContentNew.value[row][2]);
             
+            fileContentNewFiltered.value.calculations[category] = fileContentNewFiltered.value.calculations[category] + Number.parseFloat(fileContentNewTmp[row][2]);
           }
-          console.log('onFilterChange: toRaw(fileContentNew.value[row][2]: ' + fileContentNew.value[row][2] + ' stringExtract: ' + stringExtract + ' fileContentNewFiltered.value.calculations[' + category + ']: ' + fileContentNewFiltered.value.calculations[category]);
-
+          
           // Set the global flag to indicate that filtered calculations have been performed.
           flagGlobal.value.fileContentNewFilteredCalculation = true;
-
-          // Break out of the inner loop (searchString loop) since a match was found.
-          break;
+          
+          fileContentNewTmp.splice(row, 1);
+       
+          // Break out of the inner loops since a match was found.
+          continue outerloop;
         }
       }
     }
-
+    
     // If no search string was found in the current row, add it to the "Sonstiges" (Miscellaneous) category.
     if (stringDetected === false) {
-      fileContentNewFiltered.value.Sonstiges.push(toRaw(fileContentNew.value[row]));
-    }
+      fileContentNewFiltered.value.Sonstiges.push(toRaw(fileContentNewTmp[row]));
 
-    // Reset the flag for the next row.
-    stringDetected = false;
+      //initialize it with the value from the third column (index 2).
+      if (isNaN(fileContentNewFiltered.value.calculations.Sonstiges)) {
+        fileContentNewFiltered.value.calculations.Sonstiges = Number.parseFloat(fileContentNewTmp[row][2]);
+      } else {
+        // Otherwise, add the value from the third column to the existing calculation for the category.
+        
+        fileContentNewFiltered.value.calculations.Sonstiges = fileContentNewFiltered.value.calculations.Sonstiges + Number.parseFloat(fileContentNewTmp[row][2]);
+      }
+      flagGlobal.value.fileContentNewFilteredCalculation = true;
+      fileContentNewTmp.splice(row, 1);
+    }
   }
 };
 
@@ -367,7 +384,7 @@ const parseJSONFile = () => {
 }
 
 const parseCSVFile = () => {
-  //console.log('fileSkipFirstNLines.value: ' + fileSkipFirstNLines.value)
+  logger(logLevel.DEBUG, 'fileSkipFirstNLines.value: ' + fileSkipFirstNLines.value)
   Papa.parse(fileObjectCSV.value, {
     header: false,
     skipEmptyLines: true,
@@ -381,7 +398,7 @@ const parseCSVFile = () => {
 }
 
 const onClickDownloadFileContenNew = (event) => {
-  //console.log('onClickDownloadFileContenNew clicked button')
+  logger(logLevel.DEBUG, 'onClickDownloadFileContenNew clicked button')
   // credit: https://www.raymondcamden.com/2020/12/15/vue-quick-shot-downloading-data-as-a-file
   // credit: https://www.bitdegree.org/learn/javascript-download
   const papaConfig = 
@@ -436,7 +453,7 @@ const onClickHeader = (event, header) => {
   // Flag als Trigger für die Aktualisierung des HTMLs bzw. zm Umschalten der Sichtbarkeit
   flagGlobal.value.clickedHeader = true;
   
-  //console.log('fileContent.value[0][header]: ', fileContent.value[0][header]);
+  logger(logLevel.DEBUG, 'fileContent.value[0][header]: ', fileContent.value[0][header]);
 
   // Überprüfung ob es schon ein angelegtes neues Objekt zum Erstellen eines CSVs gibt.
   if (fileContentNew.value.length > 0){
@@ -472,7 +489,7 @@ const onDoubleClickHeaderNew = (event, header) => {
 }
 
 const onChangeColumnFormat = (event) => {
-  //console.log('onChangeColumnFormat: newColumnFormat.value: ', newColumnFormat.value)
+  logger(logLevel.DEBUG, 'onChangeColumnFormat: newColumnFormat.value: ', newColumnFormat.value)
   if (newColumnFormat.value == 'date') {
     flagGlobal.value.newColumnFormFormatDateSelected = true;
   }
@@ -538,10 +555,14 @@ function changeColumnFormatDate(tmp) {
 }
 
 function changeColumnFormatCurrent(tmp) {
-  //console.log('tmp begin: ', tmp)
+  logger(logLevel.DEBUG, 'tmp begin: ', tmp)
 
   tmp = String(tmp);
 
+  // Entfernt führende und folgende Leerzeichen
+  tmp = tmp.trim(); 
+  // Entferne alle Zeichen außer Ziffern, Komma, Punkt und - am Anfang
+  tmp = tmp.replace(/[^\d,.\-]/g, ''); 
 
   if (tmp.includes(',', tmp.length - 3) == true){
     tmp = tmp.replace('.','');
@@ -589,19 +610,19 @@ return tmp;
 
 const onClickSortFirstColumn = (event) => {
   const tmpHeader = fileContent.value.slice(0, 1);
-  //console.log('onClickAssignAllColumns: tmpHeader: ', tmpHeader);
+  logger(logLevel.DEBUG, 'onClickAssignAllColumns: tmpHeader: ', tmpHeader);
   const tmpWithoutHeader = fileContent.value.slice(1);
-  //console.log('onClickAssignAllColumns: tmpWithoutHeader: ', tmpWithoutHeader);
+  logger(logLevel.DEBUG, 'onClickAssignAllColumns: tmpWithoutHeader: ', tmpWithoutHeader);
   tmpWithoutHeader.sort();
-  //console.log('onClickAssignAllColumns: tmpWithoutHeader_sorted: ', tmpWithoutHeader);
+  logger(logLevel.DEBUG, 'onClickAssignAllColumns: tmpWithoutHeader_sorted: ', tmpWithoutHeader);
   fileContent.value = tmpHeader.concat(tmpWithoutHeader);
 
-  //console.log('onClickAssignAllColumns: fileContent.value[index]: ', toRaw(fileContent.value));
+  logger(logLevel.DEBUG, 'onClickAssignAllColumns: fileContent.value[index]: ', toRaw(fileContent.value));
 
 }
 
 const onClickAssignAllColumns = (event) => {
-  console.log('onClickAssignAllColumns start')
+  logger(logLevel.INFO, 'onClickAssignAllColumns start')
 
   newColumnFormat.value = 'text';
 
@@ -614,7 +635,7 @@ const onClickAssignAllColumns = (event) => {
 }
 
 const onClickAssignNewColumn = (event) => {
-  //console.log('onClickAssignNewColumn start: ');  
+  logger(logLevel.DEBUG, 'onClickAssignNewColumn start: ');  
 
   // Überprüfung ob es schon ein neues CSV Objekt gibt
   if (fileContentNew.value.length > 0) {

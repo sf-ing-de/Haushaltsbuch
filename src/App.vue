@@ -239,6 +239,12 @@ tr:nth-child(odd) {background-color: rgb(255, 231, 231);}
 
 <script setup>
 import { logger, logLevel, setLogLevel } from '@/utils/logger.js';
+/*export const logLevel = {
+  DEBUG: 1,
+  INFO: 2,
+  WARN: 3,
+  ERROR: 4,
+};*/
 setLogLevel(logLevel.INFO);
 
 import { ref, toRaw } from 'vue'
@@ -319,9 +325,11 @@ const onChangeFilterChange = (event) => {
         if (stringExtract.includes(searchString.toLowerCase())) {
           // Set the flag to true, indicating a search string was found.
           stringDetected = true;
-
+          
           // Add the current row to the filtered data for the current category.
           fileContentNewFiltered.value[category].push(toRaw(fileContentNewTmp[row]));
+
+          //logger(logLevel.INFO, 'onFilterChange:string detected:fileContentNewFiltered.value[category]: ' + fileContentNewFiltered.value[category]);
 
           // Perform calculations: if the category is not yet in the calculations object, initialize it with the value from the third column (index 2).
           if (isNaN(fileContentNewFiltered.value.calculations[category])) {
@@ -331,7 +339,7 @@ const onChangeFilterChange = (event) => {
             
             fileContentNewFiltered.value.calculations[category] = fileContentNewFiltered.value.calculations[category] + Number.parseFloat(fileContentNewTmp[row][2]);
           }
-          
+          //logger(logLevel.INFO, 'onFilterChange:string detected:fileContentNewFiltered.value[category] after calc: ' + fileContentNewFiltered.value[category]);
           // Set the global flag to indicate that filtered calculations have been performed.
           flagGlobal.value.fileContentNewFilteredCalculation = true;
           
@@ -359,6 +367,23 @@ const onChangeFilterChange = (event) => {
       fileContentNewTmp.splice(row, 1);
     }
   }
+  logger(logLevel.DEBUG, 'onFilterChange:string detected:fileContentNewFiltered.value: ' + JSON.stringify(fileContentNewFiltered.value, null, 2));
+  for (const category of Object.keys(categoryJSON.value)) {    
+    if (fileContentNewFiltered.value[category].length > 1) {
+      if (!fileContentNewFiltered.value[category][0].includes("Kummuliert")) {
+        fileContentNewFiltered.value[category][0].push("Kummuliert")
+      }
+      fileContentNewFiltered.value[category][1][3] = Number.parseFloat(fileContentNewFiltered.value[category][1][2]);
+    }
+    if (fileContentNewFiltered.value[category].length > 2) {      
+      for (let row = 2; row < fileContentNewFiltered.value[category].length; row++) {
+        if (fileContentNewFiltered.value[category][row].length < 4){
+          fileContentNewFiltered.value[category][row].push(fileContentNewFiltered.value[category][row - 1][3] + Number.parseFloat(fileContentNewFiltered.value[category][row][2]));
+        }
+      }
+    }
+  }
+  logger(logLevel.DEBUG, 'onFilterChange:string detected:fileContentNewFiltered.value: ' + JSON.stringify(fileContentNewFiltered.value, null, 2));
 };
 
 const onJSONFileSelected = (event) => {
